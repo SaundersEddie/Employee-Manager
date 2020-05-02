@@ -29,6 +29,11 @@ function displayLoginLogo() {
 
 function start() {
     displayLoginLogo();
+    getUserInput();
+}
+
+function getUserInput() {
+// EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     inquirer
         .prompt(
             {
@@ -38,17 +43,36 @@ function start() {
                 choices: ["View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Whack Employee", "Update Employee Role", "Update Employee Manager", "Leave This Application"]
             })
         .then(function (answer) {
-            console.log("Your selection was: ", answer);
-            switch (answer) {
+            // console.log("Your selection was: ", answer);
+            // console.log (answer.userSelection);
+            switch (answer.userSelection) {
                 case ("View All Employees"):
                     console.log("Viewing all employees");
                     break;
-                case ("View All Employees By Department"):
+                case ("View All Employees by Department"):
                     console.log("View all by Dept");
+                    break;
+                case ("View All Employees by Manager"):
+                    console.log("View all by Manager");
+                    break;
+                case ("Add Employee"):
+                    console.log("Add Employee");
+                    break;
+                case ("Whack Employee"):
+                    console.log("Whack Employee");
+                    break;
+                case ("Update Employee Role"):
+                    console.log("Update Employee Role");
+                    break;
+                case ("Update Employee Manager"):
+                    console.log("Update Employee Manager");
+                    break;
+                case ("Leave This Application"):
+                    console.log("Leave This Application");
                     break;
                 default:
                     console.log("An Error Occurred");
-                    console.log("You selected ", answer);
+                    // console.log("You selected ", answer);
                     connection.end();
             };
         });
