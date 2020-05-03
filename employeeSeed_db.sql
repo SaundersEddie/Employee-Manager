@@ -19,15 +19,15 @@ CREATE TABLE employee (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
-    role_id INT,
-    manager_id INT,
+    role_id INT, -- This is tied to role table id (PK)
+    manager_id INT, -- This appears to be an FK 
     PRIMARY KEY (id)
 );
 
 CREATE TABLE department (
-    dept_id INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT, 
     dept_name VARCHAR(30),
-    PRIMARY KEY (dept_id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE user_role (
@@ -38,3 +38,12 @@ CREATE TABLE user_role (
     PRIMARY KEY (id)
 );
 
+-- Seed some tables with test data
+INSERT INTO employee (first_name, last_name, manager_id)
+VALUES ("Eddie", "Saunders",1);
+
+INSERT INTO department (dept_name)
+VALUE ("Engineering");
+
+INSERT INTO user_role (title, salary)
+VALUE ("Nub", 50000);
