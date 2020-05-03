@@ -47,28 +47,30 @@ function getUserInput() {
             // console.log (answer.userSelection);
             switch (answer.userSelection) {
                 case ("View All Employees"):
-                    console.log("Viewing all employees");
+                    viewAllEmployees();
+                    //console.log("Viewing all employees");
                     break;
                 case ("View All Employees by Department"):
-                    console.log("View all by Dept");
+                    viewAllEmployeesByDepartment();
                     break;
                 case ("View All Employees by Manager"):
-                    console.log("View all by Manager");
+                    viewAllEmployeesByManager();
                     break;
                 case ("Add Employee"):
-                    console.log("Add Employee");
+                    addEmployee();
                     break;
                 case ("Whack Employee"):
-                    console.log("Whack Employee");
+                    deleteEmployee();
                     break;
                 case ("Update Employee Role"):
-                    console.log("Update Employee Role");
+                    updateEmployeeRole();
                     break;
                 case ("Update Employee Manager"):
-                    console.log("Update Employee Manager");
+                    updateEmployeeManager();
                     break;
                 case ("Leave This Application"):
-                    console.log("Leave This Application");
+                    console.log("Leaving Application");
+                    connection.end();
                     break;
                 default:
                     console.log("An Error Occurred");
@@ -76,4 +78,42 @@ function getUserInput() {
                     connection.end();
             };
         });
+}
+
+function viewAllEmployees() {
+    // EXS 2nd May 2020 - Display all employees then return
+    console.log ("View all employees baby!")
+ 
+    // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
+    getUserInput();
+}
+
+function viewAllEmployeesByDepartment() {
+    console.log ("View all by Dept")
+    getUserInput();
+}
+
+function viewAllEmployeesByManager () {
+    console.log ("View all by Manager");
+    getUserInput();
+}
+
+function addEmployee() {
+    console.log ("Adding Employee Baby");
+    getUserInput();
+}
+
+function deleteEmployee() {
+    console.log ("Whack it baby!");
+    getUserInput();
+}
+
+function updateEmployeeRole() {
+    console.log ("Updating employee Role");
+    getUserInput();
+}
+
+function updateEmployeeManager() {
+    console.log ("Update Employee Manager");
+    getUserInput();
 }
