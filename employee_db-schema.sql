@@ -37,13 +37,3 @@ CREATE TABLE user_role (
     department_id INT,
     PRIMARY KEY (id)
 );
-
--- Seed some tables with test data
-INSERT INTO employee (first_name, last_name, manager_id)
-VALUES ("Eddie", "Saunders",1);
-
-INSERT INTO department (dept_name)
-VALUE ("Engineering");
-
-INSERT INTO user_role (title, salary)
-VALUE ("Nub", 50000);
