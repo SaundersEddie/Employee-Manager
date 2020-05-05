@@ -32,7 +32,7 @@ function start() {
 // were left as functions, one only wants bleedng eyes from using the app, not following the code.
 
 function getUserInput() {
-// EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
+    // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     inquirer
         .prompt(
             {
@@ -81,44 +81,68 @@ function getUserInput() {
 function viewAllEmployees() {
     // EXS 2nd May 2020 - Display all employees then return
     // console.log ("View all employees baby!")
-    connection.query("SELECT * FROM employee", function (err,results) {
-        if (err) throw err;
-        console.log ("\n");
-        console.table(results);
-        console.log ("\n");
-    })
-    
+    const viewAllEmployees = "SELECT * FROM employee";
+    executeQuery(viewAllEmployees);
+    // connection.query("SELECT * FROM employee", function (err, results) {
+    //     if (err) throw err;
+    //     console.log("\n");
+    //     console.table(results);
+    //     console.log("\n");
+    // })
+
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
     getUserInput();
 }
 
 function viewAllEmployeesByDepartment() {
-    console.log ("View all by Dept")
+    console.log("View all by Dept")
+    inquirer
+        .prompt(
+            {
+                name: "departmentName",
+                message: "Please enter the Department Name: ",
+            })
+        .then(answer => {
+            const viewAllByDepartment = `SELECT * FROM employee WHERE department = '${answer.departmentName}'`;
+            console.log(viewAllByDepartment);
+
+        })
     getUserInput();
 }
 
-function viewAllEmployeesByManager () {
-    console.log ("View all by Manager");
+function viewAllEmployeesByManager() {
+    console.log("View all by Manager");
+    inquirer
+        .prompt(
+            {
+                name: "managerName",
+                message: "Please enter the Manager Name?",
+            })
+        .then(answer => {
+            const viewAllByManager = `SELECT * FROM employee WHERE manager = '${answer.managerName}'`;
+            console.log(viewAllByManager);
+
+        })
     getUserInput();
 }
 
 function addEmployee() {
-    console.log ("Adding Employee Baby");
+    console.log("Adding Employee Baby");
     getUserInput();
 }
 
 function deleteEmployee() {
-    console.log ("Whack it baby!");
+    console.log("Whack it baby!");
     getUserInput();
 }
 
 function updateEmployeeRole() {
-    console.log ("Updating employee Role");
+    console.log("Updating employee Role");
     getUserInput();
 }
 
 function updateEmployeeManager() {
-    console.log ("Update Employee Manager");
+    console.log("Update Employee Manager");
     getUserInput();
 }
 
@@ -126,6 +150,18 @@ function leaveApplication() {
     console.log("Leaving Application");
     connection.end();
 }
+
+function executeQuery(myQuery) {
+    connection.query(myQuery, function (err, results) {
+        if (err) throw err;
+        console.log("\n");
+        console.table(results);
+        console.log("\n");
+    });
+}
+
+
+
 
 function displayLogo() {
     console.log('8888888888                        888                                     ');
@@ -147,7 +183,7 @@ function displayLogo() {
     console.log('888    888 .d888888 888    .d888888 888  888 .d888888 "Y8888b. 88888888   ');
     console.log('888  .d88P 888  888 Y88b.  888  888 888 d88P 888  888      X88 Y8b.       ');
     console.log('8888888P"  "Y888888  "Y888 "Y888888 88888P"  "Y888888  88888P"  "Y8888    ');
-                                                                              
+
 
 }
 
