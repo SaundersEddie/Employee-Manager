@@ -1,5 +1,6 @@
 -- Initial seeding of employee_db
 -- Eddie Saunders saunders.eddie@outlook.com 2nd May 2020
+-- These files should be executed within in mySQL workbench
 
 USE employee_db;
 

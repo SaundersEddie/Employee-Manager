@@ -1,8 +1,8 @@
 -- Initial Database and table build
 -- Eddie Saunders saunders.eddie@outlook.com 2nd May 2020
+-- These files should be executed within in mySQL workbench
 
 -- Create the Database then create the following 3 tables
-
 -- employee Table
 -- department table
 -- role table

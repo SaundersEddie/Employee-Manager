@@ -1,8 +1,11 @@
 // Employee Manager front end
-// 
-// Eddie Saunders saunders.eddie@outlook.com 2md May2020
-//
+// This reminds me of those old school green screen applications that gave you a headache and made your eyes
+// bleed after 25 minutes of use...
 
+// This app uses the following NPMpackages:
+// mysql, inquirer, and console.table
+
+// Eddie Saunders saunders.eddie@outlook.com 2md May2020
 
 const mysql = require("mysql");
 const inquirer = require("inquirer");
@@ -12,25 +15,21 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "WestHam666!!",
+    password: "WestHam666!!", // naughty naughty code
     database: "employee_db"
 });
 
-connection.connect(function (error) {
-    if (error) throw error;
-    console.log("connected as id " + connection.threadId);
-    start();
-});
-
-function displayLoginLogo() {
-    console.log("Connecting to Employee Database");
-    return;
-}
+// EXS 5th May 2020 - Build our functions out
 
 function start() {
     displayLogo();
     getUserInput();
 }
+
+// EXS 2nd May 2020 - This only needs to be a simple function as we're using the reponse locally, and call out functions from within
+// the switch statement
+// Some of the commands could have been done in place of the switch statement, however in the name of clarify rather than performance they
+// were left as functions, one only wants bleedng eyes from using the app, not following the code.
 
 function getUserInput() {
 // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
@@ -69,8 +68,7 @@ function getUserInput() {
                     updateEmployeeManager();
                     break;
                 case ("Leave This Application"):
-                    console.log("Leaving Application");
-                    connection.end();
+                    leaveApplication();
                     break;
                 default:
                     console.log("An Error Occurred");
@@ -82,8 +80,14 @@ function getUserInput() {
 
 function viewAllEmployees() {
     // EXS 2nd May 2020 - Display all employees then return
-    console.log ("View all employees baby!")
- 
+    // console.log ("View all employees baby!")
+    connection.query("SELECT * FROM employee", function (err,results) {
+        if (err) throw err;
+        console.log ("\n");
+        console.table(results);
+        console.log ("\n");
+    })
+    
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
     getUserInput();
 }
@@ -118,6 +122,10 @@ function updateEmployeeManager() {
     getUserInput();
 }
 
+function leaveApplication() {
+    console.log("Leaving Application");
+    connection.end();
+}
 
 function displayLogo() {
     console.log('8888888888                        888                                     ');
@@ -142,3 +150,12 @@ function displayLogo() {
                                                                               
 
 }
+
+// EXS 5th May 2020 - End of our functions
+
+// EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
+connection.connect(function (error) {
+    if (error) throw error;
+    console.log("connected as id " + connection.threadId);
+    start();
+});
