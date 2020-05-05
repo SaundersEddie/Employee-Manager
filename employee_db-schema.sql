@@ -8,11 +8,9 @@
 -- role table
 
 DROP DATABASE IF EXISTS employee_db;
-
 CREATE DATABASE employee_db;
 
 -- Create our employee table in the employee_db
-
 USE employee_db;
 
 CREATE TABLE employee (
@@ -34,6 +32,6 @@ CREATE TABLE user_role (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR (30),
     salary DECIMAL,
-    department_id INT,
+    department_id INT NOT NULL,
     PRIMARY KEY (id)
 );
