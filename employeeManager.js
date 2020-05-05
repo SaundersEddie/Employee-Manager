@@ -104,7 +104,8 @@ function viewAllEmployeesByDepartment() {
             })
         .then(answer => {
             const viewAllByDepartment = `SELECT * FROM employee WHERE department = '${answer.departmentName}'`;
-            console.log(viewAllByDepartment);
+            executeQuery (viewAllByDepartment)
+            // console.log(viewAllByDepartment);
 
         })
     getUserInput();
@@ -120,7 +121,8 @@ function viewAllEmployeesByManager() {
             })
         .then(answer => {
             const viewAllByManager = `SELECT * FROM employee WHERE manager = '${answer.managerName}'`;
-            console.log(viewAllByManager);
+            executeQuery(viewAllByManager);
+            //console.log(viewAllByManager);
 
         })
     getUserInput();
