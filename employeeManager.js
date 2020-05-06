@@ -130,6 +130,7 @@ function viewAllEmployeesByManager() {
 
 function addEmployee() {
     console.log("Adding Employee Baby");
+    
     getUserInput();
 }
 
