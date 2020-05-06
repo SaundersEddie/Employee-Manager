@@ -21,86 +21,27 @@ const connection = mysql.createConnection({
 
 // EXS 5th May 2020 - Build our functions out
 
-function start() {
-    displayLogo();
-    getUserInput();
-}
-
 // EXS 2nd May 2020 - This only needs to be a simple function as we're using the reponse locally, and call out functions from within
 // the switch statement
 // Some of the commands could have been done in place of the switch statement, however in the name of clarify rather than performance they
 // were left as functions, one only wants bleedng eyes from using the app, not following the code.
-
-function getUserInput() {
-    // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
-    inquirer
-        .prompt({
-            name: "userSelection",
-            type: "list",
-            message: "What would you like to do today?",
-            choices: ["View All Employees",
-                "View All Employees by Department",
-                "View All Employees by Manager",
-                "Add Employee",
-                "Whack Employee",
-                "Update Employee Role",
-                "Update Employee Manager",
-                "Leave This Application"
-            ]
-        })
-        .then(function(answer) {
-            // console.log("Your selection was: ", answer);
-            // console.log (answer.userSelection);
-            switch (answer.userSelection) {
-                case ("View All Employees"):
-                    viewAllEmployees();
-                    //console.log("Viewing all employees");
-                    break;
-                case ("View All Employees by Department"):
-                    viewAllEmployeesByDepartment();
-                    break;
-                case ("View All Employees by Manager"):
-                    viewAllEmployeesByManager();
-                    break;
-                case ("Add Employee"):
-                    addEmployee();
-                    break;
-                case ("Whack Employee"):
-                    deleteEmployee();
-                    break;
-                case ("Update Employee Role"):
-                    updateEmployeeRole();
-                    break;
-                case ("Update Employee Manager"):
-                    updateEmployeeManager();
-                    break;
-                case ("Leave This Application"):
-                    leaveApplication();
-                    break;
-                default:
-                    console.log("An Error Occurred");
-                    // console.log("You selected ", answer);
-                    connection.end();
-            };
-        });
-}
 
 function viewAllEmployees() {
     // EXS 2nd May 2020 - Display all employees then return
     console.log("View all Employees");
 
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
-    getUserInput();
+    //    getUserInput();
 }
 
 function viewAllEmployeesByDepartment() {
     console.log("View all by Dept")
-    getUserInput();
+        //    getUserInput();
 }
 
 function viewAllEmployeesByManager() {
     console.log("View all by Manager");
-    getUserInput();
+    //    getUserInput();
 }
 
 function addEmployee() {
@@ -125,7 +66,7 @@ function addEmployee() {
             console.log(answer);
         })
 
-    getUserInput();
+    // getUserInput();
 }
 
 function deleteEmployee() {
@@ -138,7 +79,7 @@ function deleteEmployee() {
             name: "whackedID",
             message: "Please enter whacked employees ID: ",
         })
-    getUserInput();
+        // getUserInput();
 }
 
 function updateEmployeeRole() {
@@ -154,7 +95,7 @@ function updateEmployeeRole() {
             name: "updatedRole",
             message: "Please enter employees new role: "
         })
-    getUserInput();
+        // getUserInput();
 }
 
 function updateEmployeeManager() {
@@ -170,7 +111,7 @@ function updateEmployeeManager() {
             name: "newManagerRole",
             message: "Please enter employees new manager: "
         })
-    getUserInput();
+        // getUserInput();
 }
 
 function leaveApplication() {
@@ -186,9 +127,6 @@ function executeQuery(myQuery) {
         console.log("\n");
     });
 }
-
-
-
 
 function displayLogo() {
     console.log('8888888888                        888                                     ');
@@ -211,7 +149,57 @@ function displayLogo() {
     console.log('888  .d88P 888  888 Y88b.  888  888 888 d88P 888  888      X88 Y8b.       ');
     console.log('8888888P"  "Y888888  "Y888 "Y888888 88888P"  "Y888888  88888P"  "Y8888    ');
 
+    return true;
+}
 
+async function startApp() {
+    // Get our initial input
+    const getUserInput = await inquirer.prompt({
+        name: "userSelection",
+        type: "list",
+        message: "What would you like to do today?",
+        choices: ["View All Employees",
+            "View All Employees by Department",
+            "View All Employees by Manager",
+            "Add Employee",
+            "Whack Employee",
+            "Update Employee Role",
+            "Update Employee Manager",
+            "Leave This Application"
+        ]
+    })
+    console.log(getUserInput.userSelection)
+    switch (getUserInput.userSelection) {
+        case ("View All Employees"):
+            viewAllEmployees();
+            //console.log("Viewing all employees");
+            break;
+        case ("View All Employees by Department"):
+            viewAllEmployeesByDepartment();
+            break;
+        case ("View All Employees by Manager"):
+            viewAllEmployeesByManager();
+            break;
+        case ("Add Employee"):
+            addEmployee();
+            break;
+        case ("Whack Employee"):
+            deleteEmployee();
+            break;
+        case ("Update Employee Role"):
+            updateEmployeeRole();
+            break;
+        case ("Update Employee Manager"):
+            updateEmployeeManager();
+            break;
+        case ("Leave This Application"):
+            leaveApplication();
+            break;
+        default:
+            console.log("An Error Occurred");
+            // console.log("You selected ", answer);
+            connection.end();
+    };
 }
 
 // EXS 5th May 2020 - End of our functions
@@ -220,5 +208,6 @@ function displayLogo() {
 connection.connect(function(error) {
     if (error) throw error;
     console.log("connected as id " + connection.threadId);
-    start();
+    displayLogo();
+    startApp();
 });
