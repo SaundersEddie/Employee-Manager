@@ -34,21 +34,21 @@ function start() {
 function getUserInput() {
     // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     inquirer
-        .prompt(
-            {
-                name: "userSelection",
-                type: "list",
-                message: "What would you like to do today?",
-                choices: ["View All Employees",
-                        "View All Employees by Department",
-                        "View All Employees by Manager",
-                        "Add Employee",
-                        "Whack Employee",
-                        "Update Employee Role",
-                        "Update Employee Manager",
-                        "Leave This Application"]
-            })
-        .then(function (answer) {
+        .prompt({
+            name: "userSelection",
+            type: "list",
+            message: "What would you like to do today?",
+            choices: ["View All Employees",
+                "View All Employees by Department",
+                "View All Employees by Manager",
+                "Add Employee",
+                "Whack Employee",
+                "Update Employee Role",
+                "Update Employee Manager",
+                "Leave This Application"
+            ]
+        })
+        .then(function(answer) {
             // console.log("Your selection was: ", answer);
             // console.log (answer.userSelection);
             switch (answer.userSelection) {
@@ -87,15 +87,7 @@ function getUserInput() {
 
 function viewAllEmployees() {
     // EXS 2nd May 2020 - Display all employees then return
-    // console.log ("View all employees baby!")
-    const viewAllEmployees = "SELECT * FROM employee";
-    executeQuery(viewAllEmployees);
-    // connection.query("SELECT * FROM employee", function (err, results) {
-    //     if (err) throw err;
-    //     console.log("\n");
-    //     console.table(results);
-    //     console.log("\n");
-    // })
+    console.log("View all Employees");
 
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
     getUserInput();
@@ -103,35 +95,11 @@ function viewAllEmployees() {
 
 function viewAllEmployeesByDepartment() {
     console.log("View all by Dept")
-    inquirer
-        .prompt(
-            {
-                name: "departmentName",
-                message: "Please enter the Department Name: ",
-            })
-        .then(answer => {
-            const viewAllByDepartment = `SELECT * FROM employee WHERE department = '${answer.departmentName}'`;
-            executeQuery (viewAllByDepartment)
-            // console.log(viewAllByDepartment);
-
-        })
     getUserInput();
 }
 
 function viewAllEmployeesByManager() {
     console.log("View all by Manager");
-    inquirer
-        .prompt(
-            {
-                name: "managerName",
-                message: "Please enter the Manager Name?",
-            })
-        .then(answer => {
-            const viewAllByManager = `SELECT * FROM employee WHERE manager = '${answer.managerName}'`;
-            executeQuery(viewAllByManager);
-            //console.log(viewAllByManager);
-
-        })
     getUserInput();
 }
 
@@ -140,38 +108,68 @@ function addEmployee() {
     // EXS 6th May 2020 
     // Create an inquirer prompt to add a new employee
     inquirer
-        .prompt (
-            {
-                name: "employeeFirstName",
-                message: "Please enter employee first name: ",
-            },{
-                name: "employeeLastName",
-                message: "Please enter employee last name: "
-            }, {
-                name: "newEmployeeManagerID",
-                message: "Please enter employee manager ID: "
-            })
-            .then (answer => {
-                const addNewEmployee = `INSERT INTO employee (first_name, last_name, manager_id) VALUES (${answer.employeeFirstName}, ${answer.employeeLastName}, ${answer.newEmployeeManagerID})`
-                console.log (addNewEmployee);
-            })
-        
+        .prompt({
+            name: "employeeFirstName",
+            message: "Please enter employee first name: "
+        }, {
+            name: "employeeLastName",
+            message: "Please enter employee last name: "
+        }, {
+            name: "newEmployeeManagerID",
+            message: "Please enter employee manager ID: "
+        }, {
+            name: "employeeRole",
+            message: "Please enter employee role: ",
+        })
+        .then(answer => {
+            console.log(answer);
+        })
 
     getUserInput();
 }
 
 function deleteEmployee() {
     console.log("Whack it baby!");
+    inquirer
+        .prompt({
+            name: "whackedLastName",
+            message: "Please enter employee last name: ",
+        }, {
+            name: "whackedID",
+            message: "Please enter whacked employees ID: ",
+        })
     getUserInput();
 }
 
 function updateEmployeeRole() {
     console.log("Updating employee Role");
+    inquirer
+        .prompt({
+            name: "updatedLastName",
+            message: "Please enter employee last name: ",
+        }, {
+            name: "updatedID",
+            message: "Please enter whacked employees ID: ",
+        }, {
+            name: "updatedRole",
+            message: "Please enter employees new role: "
+        })
     getUserInput();
 }
 
 function updateEmployeeManager() {
     console.log("Update Employee Manager");
+    inquirer
+        .prompt({
+            name: "newManagerLastName",
+            message: "Please enter employee last name: ",
+        }, {
+            name: "newManagerID",
+            message: "Please enter employees ID: ",
+        }, {
+            name: "newManagerRole",
+            message: "Please enter employees new manager: "
+        })
     getUserInput();
 }
 
@@ -181,7 +179,7 @@ function leaveApplication() {
 }
 
 function executeQuery(myQuery) {
-    connection.query(myQuery, function (err, results) {
+    connection.query(myQuery, function(err, results) {
         if (err) throw err;
         console.log("\n");
         console.table(results);
@@ -219,7 +217,7 @@ function displayLogo() {
 // EXS 5th May 2020 - End of our functions
 
 // EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
-connection.connect(function (error) {
+connection.connect(function(error) {
     if (error) throw error;
     console.log("connected as id " + connection.threadId);
     start();
