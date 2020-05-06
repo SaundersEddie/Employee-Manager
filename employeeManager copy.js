@@ -28,42 +28,41 @@ const connection = mysql.createConnection({
 
 function viewAllEmployees() {
     // EXS 2nd May 2020 - Display all employees then return
-    console.log("View all Employees");
+    console.log("Inside Function: View all Employees");
 
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
     //    getUserInput();
 }
 
 function viewAllEmployeesByDepartment() {
-    console.log("View all by Dept")
+    console.log("Inside Function: View all by Dept")
         //    getUserInput();
 }
 
 function viewAllEmployeesByManager() {
-    console.log("View all by Manager");
+    console.log("Inside Function: View all by Manager");
     //    getUserInput();
 }
 
-function addEmployee() {
-    console.log("Adding Employee Baby");
+async function addEmployee() {
+    console.log("Inside Function: Adding Employee Baby");
     // EXS 6th May 2020 
     // Create an inquirer prompt to add a new employee
-    inquirer
-        .prompt({
+    const newEmployee = inquirer.prompt({
             name: "employeeFirstName",
-            message: "Please enter employee first name: "
+            message: "Please enter employee first name: ",
         }, {
             name: "employeeLastName",
-            message: "Please enter employee last name: "
+            message: "Please enter employee last name: ",
         }, {
             name: "newEmployeeManagerID",
-            message: "Please enter employee manager ID: "
+            message: "Please enter employee manager ID: ",
         }, {
             name: "employeeRole",
             message: "Please enter employee role: ",
         })
-        .then(answer => {
-            console.log(answer);
+        .then(answers => {
+            return (newEmployee);
         })
 
     // getUserInput();
@@ -181,7 +180,8 @@ async function startApp() {
             viewAllEmployeesByManager();
             break;
         case ("Add Employee"):
-            addEmployee();
+            const testEmployee = await addEmployee();
+            console.log(testEmployee);
             break;
         case ("Whack Employee"):
             deleteEmployee();
