@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "", // naughty naughty code
+    password: "WestHam666!!", // naughty naughty code
     database: "employee_db"
 });
 
@@ -39,7 +39,14 @@ function getUserInput() {
                 name: "userSelection",
                 type: "list",
                 message: "What would you like to do today?",
-                choices: ["View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Whack Employee", "Update Employee Role", "Update Employee Manager", "Leave This Application"]
+                choices: ["View All Employees",
+                        "View All Employees by Department",
+                        "View All Employees by Manager",
+                        "Add Employee",
+                        "Whack Employee",
+                        "Update Employee Role",
+                        "Update Employee Manager",
+                        "Leave This Application"]
             })
         .then(function (answer) {
             // console.log("Your selection was: ", answer);
@@ -130,7 +137,26 @@ function viewAllEmployeesByManager() {
 
 function addEmployee() {
     console.log("Adding Employee Baby");
-    
+    // EXS 6th May 2020 
+    // Create an inquirer prompt to add a new employee
+    inquirer
+        .prompt (
+            {
+                name: "employeeFirstName",
+                message: "Please enter employee first name: ",
+            },{
+                name: "employeeLastName",
+                message: "Please enter employee last name: "
+            }, {
+                name: "newEmployeeManagerID",
+                message: "Please enter employee manager ID: "
+            })
+            .then (answer => {
+                const addNewEmployee = `INSERT INTO employee (first_name, last_name, manager_id) VALUES (${answer.employeeFirstName}, ${answer.employeeLastName}, ${answer.newEmployeeManagerID})`
+                console.log (addNewEmployee);
+            })
+        
+
     getUserInput();
 }
 
