@@ -6,6 +6,7 @@
 // mysql, inquirer, and console.table
 
 // Eddie Saunders saunders.eddie@outlook.com 2md May2020
+// EXS 7th May 2020 - Conversion to ES6 standards
 
 const mysql = require("mysql");
 const inquirer = require("inquirer");
@@ -15,13 +16,26 @@ const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "", // naughty naughty code
+    password: "WestHam666!!", // naughty naughty code
     database: "employee_db"
+});
+
+// EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
+connection.connect (function (error) {
+    if (error) 
+    { 
+        console.log ("Error connecting: " + error.stack);
+        return;
+    }
+    console.log("connected as id " + connection.threadId); // Remove this for prod
+    start();
 });
 
 // EXS 5th May 2020 - Build our functions out
 
+// Initial start function. Diosplay the logo then display get first user input
 function start() {
+    console.log ("Conneced");
     displayLogo();
     getUserInput();
 }
@@ -31,14 +45,17 @@ function start() {
 // Some of the commands could have been done in place of the switch statement, however in the name of clarify rather than performance they
 // were left as functions, one only wants bleedng eyes from using the app, not following the code.
 
-function getUserInput() {
+async function getUserInput() 
+{
     // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
-    inquirer
-        .prompt({
+    return inquirer.prompt
+    ({
             name: "userSelection",
             type: "list",
             message: "What would you like to do today?",
-            choices: ["View All Employees",
+            choices: 
+            [
+                "View All Employees",
                 "View All Employees by Department",
                 "View All Employees by Manager",
                 "Add Employee",
@@ -47,66 +64,75 @@ function getUserInput() {
                 "Update Employee Manager",
                 "Leave This Application"
             ]
+    })
+        .then(function (answer) 
+        {
+            // EXS 7th May 2020
+            // Call a function which will work through the selections to route our request
+            console.log(answer.userSelection);
+            routeUserSelection(answer.userSelection);
         })
-        .then(function(answer) {
-            // console.log("Your selection was: ", answer);
-            // console.log (answer.userSelection);
-            switch (answer.userSelection) {
-                case ("View All Employees"):
-                    viewAllEmployees();
-                    //console.log("Viewing all employees");
-                    break;
-                case ("View All Employees by Department"):
-                    viewAllEmployeesByDepartment();
-                    break;
-                case ("View All Employees by Manager"):
-                    viewAllEmployeesByManager();
-                    break;
-                case ("Add Employee"):
-                    addEmployee();
-                    break;
-                case ("Whack Employee"):
-                    deleteEmployee();
-                    break;
-                case ("Update Employee Role"):
-                    updateEmployeeRole();
-                    break;
-                case ("Update Employee Manager"):
-                    updateEmployeeManager();
-                    break;
-                case ("Leave This Application"):
-                    leaveApplication();
-                    break;
-                default:
-                    console.log("An Error Occurred");
-                    // console.log("You selected ", answer);
-                    connection.end();
-            };
-        });
 }
 
-function viewAllEmployees() {
-    // EXS 2nd May 2020 - Display all employees then return
-    console.log("View all Employees");
+// EXS 6th May 2020 - Route to our users choice
+const routeUserSelection = async (myChoice) => {
+// async function routeUserSelection(myChoice) {
+    switch (myChoice) {
+        case ("View All Employees"):
+            viewAllEmployees();
+            break;
+        case ("View All Employees by Department"):
+            viewAllEmployeesByDepartment();
+            break;
+        case ("View All Employees by Manager"):
+            viewAllEmployeesByManager();
+            break;
+        case ("Add Employee"):
+            addEmployee();
+            break;
+        case ("Whack Employee"):
+            deleteEmployee();
+            break;
+        case ("Update Employee Role"):
+            updateEmployeeRole();
+            break;
+        case ("Update Employee Manager"):
+            updateEmployeeManager();
+            break;
+        case ("Leave This Application"):
+            console.log ("Toodle pip!");
+            connection.end();
+            break;
+        default:
+            console.log("An Error Occurred");
+            connection.end();
+    };
+}
 
+const viewAllEmployees = async () => {
+// async function viewAllEmployees() {
+    // EXS 2nd May 2020 - Display all employees then return
+    connection.query("SELECT * FROM employee", (err, res) => {
+        if (err) throw err;
+        console.table(res)
     // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
     getUserInput();
+    })
 }
 
-function viewAllEmployeesByDepartment() {
+const viewAllEmployeesByDepartment = async () => {
     console.log("View all by Dept")
     getUserInput();
 }
 
-function viewAllEmployeesByManager() {
+
+const viewAllEmployeesByManager = async () => {
     console.log("View all by Manager");
     getUserInput();
 }
 
-function addEmployee() {
+const addEmployee = async () => {
     console.log("Adding Employee Baby");
-    // EXS 6th May 2020 
-    // Create an inquirer prompt to add a new employee
     inquirer
         .prompt({
             name: "employeeFirstName",
@@ -128,7 +154,7 @@ function addEmployee() {
     getUserInput();
 }
 
-function deleteEmployee() {
+const deleteEmployee = async () => {
     console.log("Whack it baby!");
     inquirer
         .prompt({
@@ -141,7 +167,7 @@ function deleteEmployee() {
     getUserInput();
 }
 
-function updateEmployeeRole() {
+const updateEmployeeRole = async () => {
     console.log("Updating employee Role");
     inquirer
         .prompt({
@@ -157,7 +183,7 @@ function updateEmployeeRole() {
     getUserInput();
 }
 
-function updateEmployeeManager() {
+const updateEmployeeManager = async () => {
     console.log("Update Employee Manager");
     inquirer
         .prompt({
@@ -172,23 +198,6 @@ function updateEmployeeManager() {
         })
     getUserInput();
 }
-
-function leaveApplication() {
-    console.log("Leaving Application");
-    connection.end();
-}
-
-function executeQuery(myQuery) {
-    connection.query(myQuery, function(err, results) {
-        if (err) throw err;
-        console.log("\n");
-        console.table(results);
-        console.log("\n");
-    });
-}
-
-
-
 
 function displayLogo() {
     console.log('8888888888                        888                                     ');
@@ -210,15 +219,5 @@ function displayLogo() {
     console.log('888    888 .d888888 888    .d888888 888  888 .d888888 "Y8888b. 88888888   ');
     console.log('888  .d88P 888  888 Y88b.  888  888 888 d88P 888  888      X88 Y8b.       ');
     console.log('8888888P"  "Y888888  "Y888 "Y888888 88888P"  "Y888888  88888P"  "Y8888    ');
-
-
 }
-
 // EXS 5th May 2020 - End of our functions
-
-// EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
-connection.connect(function(error) {
-    if (error) throw error;
-    console.log("connected as id " + connection.threadId);
-    start();
-});
