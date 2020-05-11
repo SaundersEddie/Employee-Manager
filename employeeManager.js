@@ -30,13 +30,13 @@ const connection = createConnection({
 
 connection.connect((err) => {
     if (err) {
-      console.error("error connecting: " + err.stack);
-      return;
+        console.error("error connecting: " + err.stack);
+        return;
     }
 
     console.log("connected as id " + connection.threadId);
     start();
-  });
+});
 
 
 
@@ -68,21 +68,21 @@ function start() {
 async function getUserInput() {
     // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     return inquirer.prompt({
-            name: "userSelection",
-            type: "list",
-            message: "What would you like to do today?",
-            choices: [
-                "View All Employees",
-                "View All Employees by Department",
-                "View All Employees by Manager",
-                "Add Employee",
-                "Whack Employee",
-                "Update Employee Role",
-                "Update Employee Manager",
-                "Leave This Application"
-            ]
-        })
-        .then(function(answer) {
+        name: "userSelection",
+        type: "list",
+        message: "What would you like to do today?",
+        choices: [
+            "View All Employees",
+            "View All Employees by Department",
+            "View All Employees by Manager",
+            "Add Employee",
+            "Whack Employee",
+            "Update Employee Role",
+            "Update Employee Manager",
+            "Leave This Application"
+        ]
+    })
+        .then(function (answer) {
             // EXS 7th May 2020
             // Call a function which will work through the selections to route our request
             console.log(answer.userSelection);
@@ -91,7 +91,7 @@ async function getUserInput() {
 }
 
 // EXS 6th May 2020 - Route to our users choice
-const routeUserSelection = async(myChoice) => {
+const routeUserSelection = async (myChoice) => {
     // async function routeUserSelection(myChoice) {
     switch (myChoice) {
         case ("View All Employees"):
@@ -125,29 +125,37 @@ const routeUserSelection = async(myChoice) => {
     };
 }
 
-const viewAllEmployees = async() => {
-    // async function viewAllEmployees() {
+async function executeSQLQuery(myQuery) {
+    //console.log ("Execute thisQuery", myQuery);
+    connection.query(myQuery, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        //console.log ("This should be the result in executeSQL query: ", res);
+        return res;
+    });
+}
+
+const viewAllEmployees = async () => {
     // EXS 2nd May 2020 - Display all employees then return
     connection.query("SELECT * FROM employee", (err, res) => {
         if (err) throw err;
         console.table(res)
-            // EXS 2nd May 2020 once we're done with viewing all return to the main menu  
-        getUserInput();
-    })
+    getUserInput();
+    });
 }
 
-const viewAllEmployeesByDepartment = async() => {
+const viewAllEmployeesByDepartment = async () => {
     console.log("View all by Dept")
     getUserInput();
 }
 
 
-const viewAllEmployeesByManager = async() => {
+const viewAllEmployeesByManager = async () => {
     console.log("View all by Manager");
     getUserInput();
 }
 
-const addEmployee = async() => {
+const addEmployee = async () => {
     //read the employees first
     connection.query("SELECT * FROM roleInfo", function (err, res) {
         if (err) throw err;
@@ -211,8 +219,8 @@ const addEmployee = async() => {
     })
 };
 
-const deleteEmployee = async() => {
-
+const deleteEmployee = async () => {
+    // Create a function here to display all employees....
     connection.query("SELECT * FROM employeeInfo", function (err, res) {
         if (err) throw err;
 
@@ -253,7 +261,7 @@ const deleteEmployee = async() => {
     })
 }
 
-const updateEmployeeRole = async() => {
+const updateEmployeeRole = async () => {
     //pull all the employees first
     connection.query("SELECT * FROM employeeInfo", function (err, res) {
         if (err) throw err
@@ -331,7 +339,7 @@ const updateEmployeeRole = async() => {
     })
 }
 
-const updateEmployeeManager = async() => {
+const updateEmployeeManager = async () => {
     //pull all the employees first
     connection.query("SELECT * FROM employeeInfo", function (err, res) {
         if (err) throw err
