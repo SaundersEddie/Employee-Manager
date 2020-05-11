@@ -26,7 +26,18 @@ const connection = createConnection({
 
 
 
-start()
+
+
+connection.connect((err) => {
+    if (err) {
+      console.error("error connecting: " + err.stack);
+      return;
+    }
+
+    console.log("connected as id " + connection.threadId);
+    start();
+  });
+
 
 
 // EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
@@ -137,71 +148,242 @@ const viewAllEmployeesByManager = async() => {
 }
 
 const addEmployee = async() => {
-    console.log("Adding Employee Baby");
-    inquirer
-        .prompt({
-            name: "employeeFirstName",
-            message: "Please enter employee first name: "
-        }, {
-            name: "employeeLastName",
-            message: "Please enter employee last name: "
-        }, {
-            name: "newEmployeeManagerID",
-            message: "Please enter employee manager ID: "
-        }, {
-            name: "employeeRole",
-            message: "Please enter employee role: ",
-        })
-        .then(answer => {
-            console.log(answer);
-        })
+    //read the employees first
+    connection.query("SELECT * FROM roleInfo", function (err, res) {
+        if (err) throw err;
 
-    getUserInput();
-}
+        //ask the key questions
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "first",
+                message: "What is the Employee's first name?"
+            },
+
+            {
+                type: "input",
+                name: "last",
+                message: "What is the Employee's last name?"
+            },
+
+            {
+                type: "list",
+                name: "role",
+                message: "What is the Employee's role?",
+                choices: function () {
+                    choiceArray = [];
+                    for (let i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].title)
+
+                    }
+                    return choiceArray
+                }
+            },
+
+            {
+                type: "list",
+                name: "manager",
+                message: "What is the manager's ID?",
+                choices: [
+                    0, 1, 2, 3, 4, 5
+                ]
+            }
+        ])
+            //input the answers
+            .then(answer => {
+
+                connection.query(
+                    "INSERT INTO employeeInfo SET ?",
+                    {
+                        first_name: answer.first,
+                        last_name: answer.last,
+                        title: answer.role,
+                        manager: answer.manager
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("added successfully");
+                        // re-prompt
+                        initial();
+                    }
+                )
+            })
+    })
+};
 
 const deleteEmployee = async() => {
-    console.log("Whack it baby!");
-    inquirer
-        .prompt({
-            name: "whackedLastName",
-            message: "Please enter employee last name: ",
-        }, {
-            name: "whackedID",
-            message: "Please enter whacked employees ID: ",
-        })
-    getUserInput();
+    //read the employees first
+    connection.query("SELECT * FROM employeeInfo", function (err, res) {
+        if (err) throw err;
+
+        //ask which employee they want to remove
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "name",
+                message: "Who would you like to remove?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                    }
+                    return choiceArray;
+                },
+            }
+        ])
+            //now actually delete them
+            .then(function (answer) {
+
+                let fullName = answer.name
+                console.log(fullName)
+                let remove = fullName.split(" ")
+                console.log(remove[0])
+
+                connection.query(
+                    `DELETE FROM employeeInfo WHERE first_name = "${remove[0]}" AND last_name = "${remove[1]}"`,
+
+                    function (err) {
+                        if (err) throw err;
+                        console.log("removed successfully");
+                        // re-prompt
+                        initial();
+                    }
+                )
+            })
+    })
 }
 
 const updateEmployeeRole = async() => {
-    console.log("Updating employee Role");
-    inquirer
-        .prompt({
-            name: "updatedLastName",
-            message: "Please enter employee last name: ",
-        }, {
-            name: "updatedID",
-            message: "Please enter whacked employees ID: ",
-        }, {
-            name: "updatedRole",
-            message: "Please enter employees new role: "
-        })
-    getUserInput();
+    //pull all the employees first
+    connection.query("SELECT * FROM employeeInfo", function (err, res) {
+        if (err) throw err
+
+        //ask who they want to modify
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "name",
+                message: "Which employee would you like to update the role of?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                    }
+                    return choiceArray;
+                }
+            },
+
+            {
+                type: "list",
+                name: "role",
+                message: "What would you like to update the role to be?",
+                choices: function () {
+                    var choiceArray = ["Add Role"];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].title);
+                    }
+                    return choiceArray;
+                }
+            }
+        ])
+            // now modify them
+            .then(function (answer) {
+                //split the name
+                let fullName = answer.name;
+                console.log(fullName);
+                let splitName = fullName.split(" ");
+                console.log(splitName[0]);
+
+                if (answer.role === "Add Role") {
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "newRole",
+                            message: "What is the new role?"
+                        }
+                    ])
+                        .then(function (result) {
+                            connection.query(
+                                `UPDATE employeeInfo SET title = "${result.newRole}" WHERE first_name = "${splitName[0]}" AND last_name = "${splitName[1]}"`,
+                                // [ {title: result.newRole}  ]   
+                                function (err) {
+                                    if (err) throw err;
+                                    console.log("added successfully");
+                                    // re-prompt
+                                    initial();
+                                }
+                            )
+                        })
+                }
+                else {
+                    connection.query(
+                        `UPDATE employeeInfo SET title = "${answer.role}" WHERE first_name = "${splitName[0]}" and last_name = "${splitName[1]}"`,
+                        // [ {title: answer.role}     ]
+                        function (err) {
+                            if (err) throw err;
+                            console.log("added successfully");
+                            // re-prompt
+                            initial();
+                        }
+                    )
+                }
+            })
+    })
 }
 
 const updateEmployeeManager = async() => {
-    console.log("Update Employee Manager");
-    inquirer
-        .prompt({
-            name: "newManagerLastName",
-            message: "Please enter employee last name: ",
-        }, {
-            name: "newManagerID",
-            message: "Please enter employees ID: ",
-        }, {
-            name: "newManagerRole",
-            message: "Please enter employees new manager: "
-        })
-    getUserInput();
+    //pull all the employees first
+    connection.query("SELECT * FROM employeeInfo", function (err, res) {
+        if (err) throw err
+
+        //ask who they want to modify
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "name",
+                message: "Which employee would you like to update the manager of?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                    }
+                    return choiceArray;
+                }
+            },
+
+            {
+                type: "list",
+                name: "manager",
+                message: "Who would you like to update the manager to be?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].manager);
+                    }
+                    return choiceArray;
+                }
+            }
+        ])
+            // now modify them
+            .then(function (answer) {
+                //split the name
+                let fullName = answer.name;
+                console.log(fullName);
+                let splitName = fullName.split(" ");
+                console.log(splitName[0]);
+
+                connection.query(
+                    `UPDATE employeeInfo SET manager = "${answer.manager}" WHERE first_name = "${splitName[0]}" and last_name = "${splitName[1]}"`,
+
+                    function (err) {
+                        if (err) throw err;
+                        console.log("updated successfully");
+                        // re-prompt
+                        initial();
+                    }
+                )
+            })
+    })
 }
 
 function displayLogo() {
