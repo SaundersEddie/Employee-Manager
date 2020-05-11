@@ -212,7 +212,7 @@ const addEmployee = async() => {
 };
 
 const deleteEmployee = async() => {
-    //read the employees first
+
     connection.query("SELECT * FROM employeeInfo", function (err, res) {
         if (err) throw err;
 
