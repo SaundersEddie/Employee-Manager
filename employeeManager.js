@@ -220,41 +220,38 @@ const addEmployee = async () => {
 };
 
 const deleteEmployee = async () => {
-    // Create a function here to display all employees....
-    connection.query("SELECT * FROM employeeInfo", function (err, res) {
+    // Display all our employees to select from
+    connection.query("SELECT * FROM employee", (err, res) => {
         if (err) throw err;
-
         //ask which employee they want to remove
         inquirer.prompt([
             {
                 type: "list",
                 name: "name",
-                message: "Who would you like to remove?",
+                message: "Who would you like to whack?",
                 choices: function () {
-                    var choiceArray = [];
-                    for (var i = 0; i < res.length; i++) {
+                    //res.forEach (element => console.table (element));
+                    console.table (res);
+                    const choiceArray = [];
+                    for (let i = 0; i < res.length; i++) {
                         choiceArray.push(res[i].first_name + " " + res[i].last_name);
+                      //  console.log ("Array: ", choiceArray);
                     }
                     return choiceArray;
                 },
             }
         ])
-            //now actually delete them
-            .then(function (answer) {
-
+        .then(function (answer) {
                 let fullName = answer.name
-                console.log(fullName)
+                // console.log(fullName)
                 let remove = fullName.split(" ")
                 console.log(remove[0])
 
-                connection.query(
-                    `DELETE FROM employeeInfo WHERE first_name = "${remove[0]}" AND last_name = "${remove[1]}"`,
-
-                    function (err) {
+                connection.query(`DELETE FROM employee WHERE first_name = "${remove[0]}" AND last_name = "${remove[1]}"`, function (err) {
                         if (err) throw err;
                         console.log("removed successfully");
                         // re-prompt
-                        initial();
+                        getUserInput();
                     }
                 )
             })
