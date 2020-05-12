@@ -137,15 +137,11 @@ async function executeSQLQuery(myQuery) {
 
 const viewAllEmployees = async () => {
     // EXS 2nd May 2020 - Display all employees then return
-    connection.query("SELECT * FROM employee", (err, res) => {
-        if (err) throw err;
-        console.table(res)
-    getUserInput();
-    });
+    connection.query("SELECT * FROM employee", (err, res) => {if (err) throw err; console.table(res); getUserInput(); });
 }
 
 const viewAllEmployeesByDepartment = async () => {
-    console.log("View all by Dept")
+    connection.query("SELECT * FROM employee", (err, res) => {if (err) throw err; console.table(res); getUserInput(); });
     getUserInput();
 }
 
@@ -224,35 +220,36 @@ const deleteEmployee = async () => {
     connection.query("SELECT * FROM employee", (err, res) => {
         if (err) throw err;
         //ask which employee they want to remove
+        let myResults = res.Map;
+        console.log("myResults:", myResults);
         inquirer.prompt([
             {
                 type: "list",
                 name: "name",
                 message: "Who would you like to whack?",
-                choices: function () {
-                    //res.forEach (element => console.table (element));
-                    console.table (res);
+                choices: () => {
                     const choiceArray = [];
                     for (let i = 0; i < res.length; i++) {
                         choiceArray.push(res[i].first_name + " " + res[i].last_name);
-                      //  console.log ("Array: ", choiceArray);
                     }
                     return choiceArray;
                 },
             }
         ])
-        .then(function (answer) {
-                let fullName = answer.name
-                // console.log(fullName)
-                let remove = fullName.split(" ")
-                console.log(remove[0])
+            .then((answer) => {
+                let fullName = answer.name;
+                console.log("Full Name: ", fullName);
+                // The challenge here will be users with names like Rip Van Winkle, While it will display Rip Van Winkle, the remove will
+                // only use Rip Van due to the way the split is setup.
+                let remove = fullName.split(" ");
+                console.log(remove);
 
                 connection.query(`DELETE FROM employee WHERE first_name = "${remove[0]}" AND last_name = "${remove[1]}"`, function (err) {
-                        if (err) throw err;
-                        console.log("removed successfully");
-                        // re-prompt
-                        getUserInput();
-                    }
+                    if (err) throw err;
+                    console.log("removed successfully");
+                    // re-prompt
+                    getUserInput();
+                }
                 )
             })
     })
