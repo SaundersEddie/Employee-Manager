@@ -23,39 +23,19 @@ const connection = createConnection({
     database: "employee_db"
 });
 
-
-
-
-
-
 connection.connect((err) => {
     if (err) {
         console.error("error connecting: " + err.stack);
         return;
     }
-
     console.log("connected as id " + connection.threadId);
     start();
 });
-
-
-
-// EXS 5th May 2020 - Make our connection, then start the app if no errors kicked in.
-// connection.connect (function (error) {
-//     if (error) 
-//     { 
-//         console.log ("Error connecting: " + error.stack);
-//         return;
-//     }
-//     console.log("connected as id " + connection.threadId); // Remove this for prod
-//     start();
-// });
 
 // EXS 5th May 2020 - Build our functions out
 
 // Initial start function. Diosplay the logo then display get first user input
 function start() {
-    console.log("Conneced");
     displayLogo();
     getUserInput();
 }
@@ -73,6 +53,8 @@ async function getUserInput() {
         message: "What would you like to do today?",
         choices: [
             "View All Employees",
+            "View All Departments",
+            "View All Roles",
             "View All Employees by Department",
             "View All Employees by Manager",
             "Add Employee",
@@ -96,6 +78,12 @@ const routeUserSelection = async (myChoice) => {
     switch (myChoice) {
         case ("View All Employees"):
             viewAllEmployees();
+            break;
+        case ("View All Departments"):
+            viewAllDepartments();
+            break;
+        case ("View All Roles"):
+            viewAllRoles();
             break;
         case ("View All Employees by Department"):
             viewAllEmployeesByDepartment();
@@ -137,19 +125,40 @@ async function executeSQLQuery(myQuery) {
 
 const viewAllEmployees = async () => {
     // EXS 2nd May 2020 - Display all employees then return
-    connection.query("SELECT * FROM employee", (err, res) => {if (err) throw err; console.table(res); getUserInput(); });
+    connection.query(`SELECT * from employee`, (err, res) => {
+        //connection.query('SELECT * FROM employee INNER JOIN user_role ON role_id = user_role.id INNER JOIN department ON department.id = user_role.department_id', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        getUserInput();
+    });
+};
+
+const viewAllDepartments = async () => {
+    connection.query(`SELECT * from department`, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        getUserInput();
+    });
+}
+
+const viewAllRoles = async () => {
+    connection.query(`SELECT * from role`, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        getUserInput();
+    });
 }
 
 const viewAllEmployeesByDepartment = async () => {
-    connection.query("SELECT * FROM employee", (err, res) => {if (err) throw err; console.table(res); getUserInput(); });
+    connection.query("SELECT * FROM employee", (err, res) => { if (err) throw err; console.table(res); getUserInput(); });
     getUserInput();
-}
+};
 
 
 const viewAllEmployeesByManager = async () => {
     console.log("View all by Manager");
     getUserInput();
-}
+};
 
 const addEmployee = async () => {
     //read the employees first
@@ -253,7 +262,7 @@ const deleteEmployee = async () => {
                 )
             })
     })
-}
+};
 
 const updateEmployeeRole = async () => {
     //pull all the employees first
@@ -331,7 +340,7 @@ const updateEmployeeRole = async () => {
                 }
             })
     })
-}
+};
 
 const updateEmployeeManager = async () => {
     //pull all the employees first
@@ -386,7 +395,7 @@ const updateEmployeeManager = async () => {
                 )
             })
     })
-}
+};
 
 function displayLogo() {
     console.log('8888888888                        888                                     ');
@@ -408,5 +417,5 @@ function displayLogo() {
     console.log('888    888 .d888888 888    .d888888 888  888 .d888888 "Y8888b. 88888888   ');
     console.log('888  .d88P 888  888 Y88b.  888  888 888 d88P 888  888      X88 Y8b.       ');
     console.log('8888888P"  "Y888888  "Y888 "Y888888 88888P"  "Y888888  88888P"  "Y8888    ');
-}
-// EXS 5th May 2020 - End of our functions
+};
+
