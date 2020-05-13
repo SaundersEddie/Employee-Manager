@@ -61,6 +61,7 @@ async function getUserInput() {
             "View All Employees by Department",
             "View All Employees by Manager",
             "Whack Employee",
+            "Delete Department",
             "Update Employee Role",
             "Update Employee Manager",
             "Leave This Application"
@@ -103,6 +104,9 @@ const routeUserSelection = async (myChoice) => {
             break;
         case ("Whack Employee"):
             deleteEmployee();
+            break;
+        case ("Delete Department"):
+            deleteDepartment();
             break;
         case ("Update Employee Role"):
             updateEmployeeRole();
@@ -245,7 +249,7 @@ const addNewRole = async () => {
             type: "input",
             name: "newRoleName",
             message: "What is the new role name? "
-        },{
+        }, {
             type: "input",
             name: "newRoleSalary",
             message: "What is the new role salary?"
@@ -279,47 +283,60 @@ const viewAllEmployeesByManager = async () => {
     getUserInput();
 };
 
-
-
 const deleteEmployee = async () => {
-    // Display all our employees to select from
-    connection.query("SELECT * FROM employee", (err, res) => {
+    connection.query(`SELECT * from employee`, (err, res) => {
+        //connection.query('SELECT * FROM employee INNER JOIN user_role ON role_id = user_role.id INNER JOIN department ON department.id = user_role.department_id', (err, res) => {
         if (err) throw err;
-        //ask which employee they want to remove
-        let myResults = res.Map;
-        console.log("myResults:", myResults);
-        inquirer.prompt([
-            {
-                type: "list",
-                name: "name",
-                message: "Who would you like to whack?",
-                choices: () => {
-                    const choiceArray = [];
-                    for (let i = 0; i < res.length; i++) {
-                        choiceArray.push(res[i].first_name + " " + res[i].last_name);
+        console.table(res);
+        return inquirer.prompt
+            (
+                [
+                    {
+                        type: "input",
+                        name: "employeeID",
+                        message: "Employee ID to Whack? "
                     }
-                    return choiceArray;
-                },
+                ]
+            )
+            .then
+            (answer => {
+                connection.query
+                    (`DELETE FROM employee WHERE id ="${answer.employeeID}"`, (err) => {
+                        if (err) throw err;
+                        console.log("Employee Whacked");
+                        getUserInput();
+                    }
+                    )
             }
-        ])
-            .then((answer) => {
-                let fullName = answer.name;
-                console.log("Full Name: ", fullName);
-                // The challenge here will be users with names like Rip Van Winkle, While it will display Rip Van Winkle, the remove will
-                // only use Rip Van due to the way the split is setup.
-                let remove = fullName.split(" ");
-                console.log(remove);
+            );
+    });
+}
 
-                connection.query(`DELETE FROM employee WHERE first_name = "${remove[0]}" AND last_name = "${remove[1]}"`, function (err) {
-                    if (err) throw err;
-                    console.log("removed successfully");
-                    // re-prompt
-                    getUserInput();
-                }
-                )
-            })
-    })
-};
+const deleteDepartment = async () => {
+    connection.query(`SELECT * from department`, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        return inquirer.prompt
+            (
+                [
+                    {
+                        type: "input",
+                        name: "departmentID",
+                        message: "Department ID to Delete? "
+                    }
+                ]
+            )
+            .then
+            (answer => {
+                connection.query
+                    (`DELETE FROM department WHERE id ="${answer.departmentID}"`, (err) => {
+                        if (err) throw err;
+                        console.log("Department Deleted");
+                        getUserInput();
+                    })
+            });
+    });
+}
 
 const updateEmployeeRole = async () => {
     //pull all the employees first
