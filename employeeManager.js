@@ -139,8 +139,7 @@ const executeSelectSQLQuery = async (myQuery) => {
       //  console.clear();
         console.log ("\n");
         console.table(res);
-        return (res);
-       // console.log("Press down arrow to bring up the menu");
+        return;
     });
    console.clear();
 };
