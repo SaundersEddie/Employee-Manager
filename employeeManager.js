@@ -55,9 +55,11 @@ async function getUserInput() {
             "View All Employees",
             "View All Departments",
             "View All Roles",
+            "Add New Employee",
+            "Add New Department",
+            "Add New Role",
             "View All Employees by Department",
             "View All Employees by Manager",
-            "Add Employee",
             "Whack Employee",
             "Update Employee Role",
             "Update Employee Manager",
@@ -71,7 +73,6 @@ async function getUserInput() {
             routeUserSelection(answer.userSelection);
         })
 }
-
 // EXS 6th May 2020 - Route to our users choice
 const routeUserSelection = async (myChoice) => {
     // async function routeUserSelection(myChoice) {
@@ -85,14 +86,20 @@ const routeUserSelection = async (myChoice) => {
         case ("View All Roles"):
             viewAllRoles();
             break;
+        case ("Add New Employee"):
+            addNewEmployee();
+            break;
+        case ("Add New Department"):
+            addNewDepartment();
+            break;
+        case ("Add New Role"):
+            addNewRole();
+            break;
         case ("View All Employees by Department"):
             viewAllEmployeesByDepartment();
             break;
         case ("View All Employees by Manager"):
             viewAllEmployeesByManager();
-            break;
-        case ("Add Employee"):
-            addEmployee();
             break;
         case ("Whack Employee"):
             deleteEmployee();
@@ -111,7 +118,7 @@ const routeUserSelection = async (myChoice) => {
             console.log("An Error Occurred");
             connection.end();
     };
-}
+};
 
 async function executeSQLQuery(myQuery) {
     //console.log ("Execute thisQuery", myQuery);
@@ -121,7 +128,7 @@ async function executeSQLQuery(myQuery) {
         //console.log ("This should be the result in executeSQL query: ", res);
         return res;
     });
-}
+};
 
 const viewAllEmployees = async () => {
     // EXS 2nd May 2020 - Display all employees then return
@@ -139,7 +146,7 @@ const viewAllDepartments = async () => {
         console.table(res);
         getUserInput();
     });
-}
+};
 
 const viewAllRoles = async () => {
     connection.query(`SELECT * from role`, (err, res) => {
@@ -147,7 +154,119 @@ const viewAllRoles = async () => {
         console.table(res);
         getUserInput();
     });
-}
+};
+
+const addNewEmployee = async () => {
+    //read the employees first
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        //Get New Employee Info
+        return inquirer.prompt([
+            {
+                type: "input",
+                name: "first",
+                message: "Employee's first name?"
+            },
+
+            {
+                type: "input",
+                name: "last",
+                message: "Employee's surname?"
+            },
+
+            {
+                type: "list",
+                name: "role",
+                message: "What is the Employee's role?",
+                choices: function () {
+                    choiceArray = [];
+                    for (let i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].title)
+                    }
+                    return choiceArray
+                }
+            },
+            {
+                type: "list",
+                name: "manager",
+                message: "What is the manager's ID?",
+                choices: [
+                    1, 2, 3
+                ]
+            }
+        ])
+            //input the answers
+            .then(answer => {
+
+                connection.query(
+                    "INSERT INTO employee SET ?",
+                    {
+                        first_name: answer.first,
+                        last_name: answer.last,
+                        role_id: answer.role,
+                        manager_id: answer.manager
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("added successfully");
+                        getUserInput();
+                    }
+                )
+            })
+    })
+};
+
+const addNewDepartment = async () => {
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "newDepartmentName",
+            message: "What is the new department name? "
+        }
+    ])
+        .then(answer => {
+            connection.query(
+                "INSERT INTO department SET ?",
+                {
+                    dept_name: answer.newDepartmentName,
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("added successfully");
+                    getUserInput();
+                }
+            )
+        })
+};
+
+const addNewRole = async () => {
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "newRoleName",
+            message: "What is the new role name? "
+        },{
+            type: "input",
+            name: "newRoleSalary",
+            message: "What is the new role salary?"
+        }
+
+    ])
+        .then(answer => {
+            connection.query(
+                "INSERT INTO role SET ?",
+                {
+                    title: answer.newRoleName,
+                    salary: answer.newRoleSalary
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("added successfully");
+                    getUserInput();
+                }
+            )
+        })
+};
 
 const viewAllEmployeesByDepartment = async () => {
     connection.query("SELECT * FROM employee", (err, res) => { if (err) throw err; console.table(res); getUserInput(); });
@@ -160,69 +279,7 @@ const viewAllEmployeesByManager = async () => {
     getUserInput();
 };
 
-const addEmployee = async () => {
-    //read the employees first
-    connection.query("SELECT * FROM roleInfo", function (err, res) {
-        if (err) throw err;
 
-        //ask the key questions
-        return inquirer.prompt([
-            {
-                type: "input",
-                name: "first",
-                message: "What is the Employee's first name?"
-            },
-
-            {
-                type: "input",
-                name: "last",
-                message: "What is the Employee's last name?"
-            },
-
-            {
-                type: "list",
-                name: "role",
-                message: "What is the Employee's role?",
-                choices: function () {
-                    choiceArray = [];
-                    for (let i = 0; i < res.length; i++) {
-                        choiceArray.push(res[i].title)
-
-                    }
-                    return choiceArray
-                }
-            },
-
-            {
-                type: "list",
-                name: "manager",
-                message: "What is the manager's ID?",
-                choices: [
-                    0, 1, 2, 3, 4, 5
-                ]
-            }
-        ])
-            //input the answers
-            .then(answer => {
-
-                connection.query(
-                    "INSERT INTO employeeInfo SET ?",
-                    {
-                        first_name: answer.first,
-                        last_name: answer.last,
-                        title: answer.role,
-                        manager: answer.manager
-                    },
-                    function (err) {
-                        if (err) throw err;
-                        console.log("added successfully");
-                        // re-prompt
-                        initial();
-                    }
-                )
-            })
-    })
-};
 
 const deleteEmployee = async () => {
     // Display all our employees to select from
