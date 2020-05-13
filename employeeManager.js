@@ -10,6 +10,7 @@
 
 // const mysql = require("mysql");
 const inquirer = require("inquirer");
+const cTable = require ("console.table");
 
 // EXS es6 type connection?
 const { createConnection } = require('mysql');
@@ -28,6 +29,7 @@ connection.connect((err) => {
         console.error("error connecting: " + err.stack);
         return;
     }
+    console.clear();
     console.log("connected as id " + connection.threadId);
     start();
 });
@@ -36,6 +38,7 @@ connection.connect((err) => {
 
 // Initial start function. Diosplay the logo then display get first user input
 function start() {
+    console.clear();
     displayLogo();
     getUserInput();
 }
@@ -46,6 +49,7 @@ function start() {
 // were left as functions, one only wants bleedng eyes from using the app, not following the code.
 
 async function getUserInput() {
+    //console.clear();
     // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     return inquirer.prompt({
         name: "userSelection",
@@ -79,12 +83,15 @@ const routeUserSelection = async (myChoice) => {
     // async function routeUserSelection(myChoice) {
     switch (myChoice) {
         case ("View All Employees"):
+            console.clear();
             viewAllEmployees();
             break;
         case ("View All Departments"):
+            console.clear();
             viewAllDepartments();
             break;
         case ("View All Roles"):
+            console.clear();
             viewAllRoles();
             break;
         case ("Add New Employee"):
@@ -124,40 +131,45 @@ const routeUserSelection = async (myChoice) => {
     };
 };
 
-async function executeSQLQuery(myQuery) {
-    //console.log ("Execute thisQuery", myQuery);
+const executeSelectSQLQuery = async (myQuery) => {
+    console.clear();
+    // EXS 13th May 2020 - Created function to execute SQL functions
     connection.query(myQuery, (err, res) => {
         if (err) throw err;
+      //  console.clear();
+        console.log ("\n");
         console.table(res);
-        //console.log ("This should be the result in executeSQL query: ", res);
-        return res;
+        return (res);
+       // console.log("Press down arrow to bring up the menu");
     });
+   console.clear();
 };
 
+
 const viewAllEmployees = async () => {
+    //console.clear();
     // EXS 2nd May 2020 - Display all employees then return
-    connection.query(`SELECT * from employee`, (err, res) => {
-        //connection.query('SELECT * FROM employee INNER JOIN user_role ON role_id = user_role.id INNER JOIN department ON department.id = user_role.department_id', (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        getUserInput();
-    });
+    ourQuery = `SELECT * from employee`;
+    executeSelectSQLQuery(ourQuery);
+    //console.clear();
+    //console.log (ourResult);
+    getUserInput();
 };
 
 const viewAllDepartments = async () => {
-    connection.query(`SELECT * from department`, (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        getUserInput();
-    });
+    //console.clear();
+    ourQuery = `SELECT * from department`;
+    executeSelectSQLQuery(ourQuery);
+    //console.clear();
+    getUserInput();
 };
 
 const viewAllRoles = async () => {
-    connection.query(`SELECT * from role`, (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        getUserInput();
-    });
+    //console.clear();
+    ourQuery = `SELECT * from role`;
+    executeSelectSQLQuery(ourQuery);
+    //console.clear();
+    getUserInput();
 };
 
 const addNewEmployee = async () => {
