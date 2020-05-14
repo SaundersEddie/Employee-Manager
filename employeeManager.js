@@ -10,7 +10,7 @@
 
 // const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const cTable = require ("console.table");
+const cTable = require("console.table");
 
 // EXS es6 type connection?
 const { createConnection } = require('mysql');
@@ -36,26 +36,26 @@ const getUserInput = () => {
     //console.clear();
     // EXS - get our user input, made this a callable function as the user needs to return here after they perform the selection
     return inquirer.prompt({
-        name: "userSelection",
-        type: "list",
-        message: "What would you like to do today?",
-        choices: [
-            "View All Employees",
-            "View All Departments",
-            "View All Roles",
-            "Add New Employee",
-            "Add New Department",
-            "Add New Role",
-            "View All Employees by Department",
-            "View All Employees by Manager",
-            "Delete Employee",
-            "Delete Department",
-            "Delete Role",
-            "Update Employee Role",
-            "Update Employee Manager",
-            "Leave This Application"
-        ]
-    })
+            name: "userSelection",
+            type: "list",
+            message: "What would you like to do today?",
+            choices: [
+                "View All Employees",
+                "View All Departments",
+                "View All Roles",
+                "Add New Employee",
+                "Add New Department",
+                "Add New Role",
+                "View All Employees by Department",
+                "View All Employees by Manager",
+                "Delete Employee",
+                "Delete Department",
+                "Delete Role",
+                "Update Employee Role",
+                "Update Employee Manager",
+                "Leave This Application"
+            ]
+        })
         .then(answer => {
             switch (answer.userSelection) {
                 case ("View All Employees"):
@@ -79,24 +79,24 @@ const getUserInput = () => {
                 case ("View All Employees by Department"):
                     viewAllEmployeesByDepartment();
                     break;
-                case ("View All Employees by Manager"):
-                    viewAllEmployeesByManager();
-                    break;
-                case ("Delete Employee"):
-                    deleteEmployee();
-                    break;
-                case ("Delete Department"):
-                    deleteDepartment();
-                    break;
-                case ("Delete Role"):
-                    deleteRole();
-                    break;
+                    // case ("View All Employees by Manager"):
+                    //     viewAllEmployeesByManager();
+                    //     break;
+                    // case ("Delete Employee"):
+                    //     deleteEmployee();
+                    //     break;
+                    // case ("Delete Department"):
+                    //     deleteDepartment();
+                    //     break;
+                    // case ("Delete Role"):
+                    //     deleteRole();
+                    //     break;
                 case ("Update Employee Role"):
                     updateEmployeeRole();
                     break;
-                case ("Update Employee Manager"):
-                    updateEmployeeManager();
-                    break;
+                    // case ("Update Employee Manager"):
+                    //     updateEmployeeManager();
+                    //     break;
                 case ("Leave This Application"):
                     console.log("Toodle pip!");
                     connection.end();
@@ -137,29 +137,26 @@ const viewAllRoles = () => {
 
 const addNewEmployee = () => {
     inquirer
-        .prompt([
-            {
-                name: "newFirstName",
-                type: "input",
-                message: "What in the new employees first name"
-            }, {
-                name: "newLastName",
-                type: "input",
-                message: "What in the new employees last name"
-            }, {
-                name: "newRole",
-                type: "input",
-                message: "What in the new employees Role"
-            }
-        ])
-        .then(function (answer) {
-            connection.query("INSERT INTO employee SET ?",
-                {
+        .prompt([{
+            name: "newFirstName",
+            type: "input",
+            message: "What in the new employees first name"
+        }, {
+            name: "newLastName",
+            type: "input",
+            message: "What in the new employees last name"
+        }, {
+            name: "newRole",
+            type: "input",
+            message: "What in the new employees Role"
+        }])
+        .then(function(answer) {
+            connection.query("INSERT INTO employee SET ?", {
                     first_name: answer.newFirstName,
                     last_name: answer.newLastName,
                     role_id: answer.newRole
                 },
-                function (err) {
+                function(err) {
                     if (err) throw err;
                     console.log("User Added")
                     viewAllEmployees();
@@ -170,19 +167,16 @@ const addNewEmployee = () => {
 
 const addNewDepartment = () => {
     inquirer
-        .prompt([
-            {
-                name: "newDeptName",
-                type: "input",
-                message: "What in the new department name"
-            }
-        ])
-        .then(function (answer) {
-            connection.query("INSERT INTO department SET ?",
-                {
+        .prompt([{
+            name: "newDeptName",
+            type: "input",
+            message: "What in the new department name"
+        }])
+        .then(function(answer) {
+            connection.query("INSERT INTO department SET ?", {
                     dept_name: answer.newDeptName,
                 },
-                function (err) {
+                function(err) {
                     if (err) throw err;
                     console.log("Department Added")
                     viewAllDepartments();
@@ -193,29 +187,26 @@ const addNewDepartment = () => {
 
 const addNewRole = () => {
     inquirer
-        .prompt([
-            {
-                name: "newRoleTitle",
-                type: "input",
-                message: "What in the new role title?"
-            }, {
-                name: "newRoleSalary",
-                type: "input",
-                message: "What in the new role salary?"
-            }, {
-                name: "newRoleDeptID",
-                type: "input",
-                message: "What in the new role department ID?"
-            }
-        ])
-        .then(function (answer) {
-            connection.query("INSERT INTO role SET ?",
-                {
+        .prompt([{
+            name: "newRoleTitle",
+            type: "input",
+            message: "What in the new role title?"
+        }, {
+            name: "newRoleSalary",
+            type: "input",
+            message: "What in the new role salary?"
+        }, {
+            name: "newRoleDeptID",
+            type: "input",
+            message: "What in the new role department ID?"
+        }])
+        .then(function(answer) {
+            connection.query("INSERT INTO role SET ?", {
                     title: answer.newRoleTitle,
                     salary: answer.newRoleSalary,
                     department_id: answer.newRoleDeptID
                 },
-                function (err) {
+                function(err) {
                     if (err) throw err;
                     console.log("Role Added")
                     viewAllRoles();
@@ -224,51 +215,47 @@ const addNewRole = () => {
         });
 }
 
-const viewAllByDept = () => {
-    console.log ("View All By Dept");
-}
+// const viewAllByDept = () => {
+//     console.log("View All By Dept");
+// }
 
-const deleteEmployee = () => {
-    inquirer
-        .prompt([
-            {
-                name: "whackedEmployee",
-                type: "input",
-                message: "What is the employee to whack"
-            }
-        ])
-        .then(function (answer) {
-            // ourQuery = `DELETE FROM employee WHERE id = ${answer.employeeID}`;
-            connection.query(`DELETE FROM employee WHERE id = ${answer.whackedEmployee}`,
-                function (err) {
-                    if (err) throw err;
-                    console.log("Employee Deleted")
-                    getUserInput();
-                }
-            );
-        });
-}
+// const deleteEmployee = () => {
+//     inquirer
+//         .prompt([{
+//             name: "whackedEmployee",
+//             type: "input",
+//             message: "What is the employee to whack"
+//         }])
+//         .then(function(answer) {
+//             // ourQuery = `DELETE FROM employee WHERE id = ${answer.employeeID}`;
+//             connection.query(`DELETE FROM employee WHERE id = ${answer.whackedEmployee}`,
+//                 function(err) {
+//                     if (err) throw err;
+//                     console.log("Employee Deleted")
+//                     getUserInput();
+//                 }
+//             );
+//         });
+// }
 
-const deleteRole = () => {
-    inquirer
-        .prompt([
-            {
-                name: "deleteRoleID",
-                type: "input",
-                message: "What is the role to delete"
-            }
-        ])
-        .then(function (answer) {
-            // ourQuery = `DELETE FROM employee WHERE id = ${answer.employeeID}`;
-            connection.query(`DELETE FROM role WHERE id = ${answer.deleteRoleID}`,
-                function (err) {
-                    if (err) throw err;
-                    console.log("Role Deleted")
-                    getUserInput();
-                }
-            );
-        });
-}
+// const deleteRole = () => {
+//     inquirer
+//         .prompt([{
+//             name: "deleteRoleID",
+//             type: "input",
+//             message: "What is the role to delete"
+//         }])
+//         .then(function(answer) {
+//             // ourQuery = `DELETE FROM employee WHERE id = ${answer.employeeID}`;
+//             connection.query(`DELETE FROM role WHERE id = ${answer.deleteRoleID}`,
+//                 function(err) {
+//                     if (err) throw err;
+//                     console.log("Role Deleted")
+//                     getUserInput();
+//                 }
+//             );
+//         });
+// }
 
 const displayLogo = () => {
     console.log('8888888888                        888                                     ');
@@ -291,7 +278,3 @@ const displayLogo = () => {
     console.log('888  .d88P 888  888 Y88b.  888  888 888 d88P 888  888      X88 Y8b.       ');
     console.log('8888888P"  "Y888888  "Y888 "Y888888 88888P"  "Y888888  88888P"  "Y8888    ');
 };
-
-
-
-
