@@ -46,13 +46,13 @@ const getUserInput = () => {
                 "Add New Employee",
                 "Add New Department",
                 "Add New Role",
-                "View All Employees by Department",
-                "View All Employees by Manager",
-                "Delete Employee",
-                "Delete Department",
-                "Delete Role",
+                // "View All Employees by Department",
+                // "View All Employees by Manager",
+                // "Delete Employee",
+                // "Delete Department",
+                // "Delete Role",
                 "Update Employee Role",
-                "Update Employee Manager",
+                // "Update Employee Manager",
                 "Leave This Application"
             ]
         })
@@ -109,7 +109,7 @@ const getUserInput = () => {
 }
 
 const viewAllEmployees = () => {
-    const ourQuery = "SELECT * FROM employee";
+    const ourQuery = "SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, role.title FROM employee INNER JOIN role ON employee.role_id = role.id";
     connection.query(ourQuery, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -174,7 +174,7 @@ const addNewDepartment = () => {
         }])
         .then(function(answer) {
             connection.query("INSERT INTO department SET ?", {
-                    dept_name: answer.newDeptName,
+                    name: answer.newDeptName,
                 },
                 function(err) {
                     if (err) throw err;
@@ -212,6 +212,24 @@ const addNewRole = () => {
                     viewAllRoles();
                 }
             );
+        });
+}
+
+const updateEmployeeRole = () => {
+    inquirer
+        .prompt([{
+            name: "employeeName",
+            message: "Please enter employee number"
+        }, {
+            name: "newEmployeeRole",
+            message: "What in the employees new role?"
+        }])
+        .then(function(answer) {
+            connection.query(`UPDATE employee SET employee.role_id=${answer.newEmployeeRole} WHERE employee.id=${answer.employeeName}`, function(err) {
+                if (err) throw err;
+                console.log("Role Updated")
+                viewAllEmployees();
+            });
         });
 }
 
